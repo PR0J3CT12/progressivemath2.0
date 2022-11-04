@@ -1,0 +1,402 @@
+@font-face {
+    font-family: 'Gilroy';
+    src: url('https://cdn.jsdelivr.net/gh/repalash/gilroy-free-webfont@fonts/Gilroy-Light.eot');
+    src: local('Gilroy Light'), local('Gilroy-Light'),
+    url('https://cdn.jsdelivr.net/gh/repalash/gilroy-free-webfont@fonts/Gilroy-Light.eot?#iefix') format('embedded-opentype'),
+    url('https://cdn.jsdelivr.net/gh/repalash/gilroy-free-webfont@fonts/Gilroy-Light.woff') format('woff'),
+    url('https://cdn.jsdelivr.net/gh/repalash/gilroy-free-webfont@fonts/Gilroy-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+ul[class], ol[class] {
+  padding: 0;
+}
+
+body, h1, h2, h3, h4, p, ul[class], ol[class], li, figure, figcaption, blockquote, dl, dd {
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+ul[class], ol[class] {
+  list-style: none;
+}
+
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+article > * + * {
+  margin-top: 1em;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.tableScroll::-webkit-scrollbar {
+    height: 15px;
+    /*width: 200px;
+    height: 15px;*/
+}
+.tableScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tableScroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-borders);
+  border-radius: 20px;
+  border: 3px solid white;
+}
+
+.tableScroll {
+
+}
+
+.manaScroll::-webkit-scrollbar {
+    width: 15px;
+}
+.manaScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.manaScroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-borders);
+  border-radius: 20px;
+  border: 3px solid white;
+}
+
+.manaScroll {
+
+}
+
+body {
+    background-color: var(--color-background);
+    font-family: 'Gilroy', sans-serif;
+    overflow: scroll;
+}
+
+:root {
+    --color-background: #edeef0;
+    --color-borders: #ccd0d5;
+    --color-block: #ffffff;
+    --color-cells: rgba(220, 225, 230, 0.5);
+    --color-input-hover: #ccd0d5;
+    --color-input-focus: #9da0a4;
+    --color-input-focus-shadow: #7d7f82;
+    --color-waiterBlock-focus: #e1e1e1;
+    --color-waiterBlock-focus-shadow: #a0a0a0;
+    --progressive-color: #1692fb;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+table {
+    border-spacing: 5px 5px;
+    border-collapse: separate;
+    padding: 5px;
+}
+
+td {
+    border: 0;
+}
+
+.errorCell {
+    background-color: #fb9a9a !important;
+}
+
+.block {
+    background-color: var(--color-block);
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: var(--color-borders);
+    box-shadow: 0 0 10px var(--color-borders);
+}
+
+.tableBlock * {
+    width: 100%;
+}
+
+.tableBlock {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.tableCol:last-child {
+    margin-right: 0;
+}
+
+.tableCol {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin: 4px 4px 4px 0;
+    min-height: 100%;
+    gap: 4px
+}
+
+.tableRow {
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+}
+
+.tableCell {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border: 0;
+}
+
+.tableBlockCell {
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-align: center;
+    justify-content: center;
+}
+
+.tableHeadCell {
+    box-sizing: border-box;
+    height: 50px;
+    font-size: 90%;
+    cursor: default;
+    white-space: break-spaces;
+    align-items: end;
+}
+
+.tableMaxCell {
+    height: 50px;
+    border-top: 1px solid var(--color-borders);
+    border-bottom: 1px solid var(--color-borders);
+    border-left: 1px solid var(--color-borders);
+    border-right: 0;
+    background-color: var(--color-block);
+    cursor: default;
+}
+
+.tableFirstCol .tableRow{
+    height: 50px;
+}
+
+.tableInput {
+    cursor: pointer;
+    transition: all 0.5s ease;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    border-top: 1px solid var(--color-borders);
+    border-bottom: 1px solid var(--color-borders);
+    border-left: 1px solid var(--color-borders);
+    border-right: 0;
+}
+
+.tableCell:last-child > .tableInput {
+    border-right: 1px solid var(--color-borders) !important;
+}
+
+.tableMaxCell:last-child {
+    border-right: 1px solid var(--color-borders) !important;
+}
+
+.tableInput:hover {
+    transition: all 0.5s ease;
+    background-color: var(--color-input-hover);
+}
+
+.tableInput:focus {
+    transition: all 0.5s ease;
+    outline: none;
+    background-color: var(--color-input-focus);
+    box-shadow: 0 0 10px var(--color-input-focus-shadow) inset;
+}
+
+.tableFirstCol > .tableRow {
+    border: 1px solid var(--color-borders);
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.tableEmptyCell {
+    border-color: rgba(0, 0, 0, 0) !important;
+}
+
+.tableNameCell {
+    cursor: default;
+}
+
+.tableLowerHolder {
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.tableUpperHolder {
+    max-width: calc(80vw - 400px);
+    min-width: calc(80vw - 200px);
+    min-height: 600px;
+    overflow-x: scroll;
+}
+
+.tableLabel {
+    position: sticky;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.adminPanelHolder {
+
+}
+
+.tableCol > :first-child {
+    height: 35px;
+}
+
+.AdminPage {
+
+}
+
+.AdminPage > h1 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 90vw;
+    justify-content: space-around;
+}
+
+.waiterBlock {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--color-borders);
+}
+
+.waiterBlockA:last-child > .waiterBlock{
+    border-bottom: 0;
+}
+
+.waiterBlockA:first-child > .waiterBlock{
+}
+
+.waiterBlock:hover {
+    background-color: var(--color-waiterBlock-focus);
+    transition: all 0.5s ease;
+    box-shadow: 0 0 10px var(--color-waiterBlock-focus-shadow) inset;
+}
+
+.waitersBlock {
+    height: 100%;
+    padding-left: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 200px;
+    overflow-y: scroll;
+}
+
+.adminProfile {
+    display: flex;
+    height: fit-content;
+    padding: 20px;
+    min-width: 80vw;
+}
+
+.TestPage > h1 {
+    text-align: center;
+}
+
+.ManaWaitersComponent {
+    margin-right: 20px;
+    width: 100%;
+}
+
+.TableComponent {
+    height: fit-content;
+}
+
+.adminContainer {
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    margin: 0 auto 30px;
+}
+
+.row_1 {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.row_2 {
+    margin: 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.stackUpper {
+    display: flex;
+    flex-direction: column;
+}
+
+.stackLower {
+    flex-basis: 0;
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+
+.logoHolder {
+    height: 120px;
+    width: 120px;
+    margin-right: 30px;
+}
+
+.logoHolder > svg {
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+}
+
+.textHolder {
+
+}

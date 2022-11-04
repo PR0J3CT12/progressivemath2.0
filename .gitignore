@@ -1,0 +1,5 @@
+.idea
+venv
+node_modules
+progressivemath2_0/.env
+client/node_modules
