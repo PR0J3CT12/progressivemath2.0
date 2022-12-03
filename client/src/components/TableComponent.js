@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {route, route_tmp} from "../index";
 import httpClient from "../components/httpClient";
+import { ReactComponent as DeadLogo } from '../svgs/logo_dead.svg';
+import {ReactComponent as Save} from "../svgs/save.svg";
+import Select from "react-select";
 
 
 export const TableComponent = () => {
@@ -14,6 +17,7 @@ export const TableComponent = () => {
     const [response, setResponse] = useState(null)
     const [error, setError] = useState(null)
     const [themes, setThemes] = useState(null)
+    const [work, setWork] = useState('')
 
 
     useEffect(() => {
@@ -168,6 +172,7 @@ export const TableComponent = () => {
                 let spl_info = key.split('_')
                 formatted_changes.push({"student_id": spl_info[0], "work_id": spl_info[1], "cell_number": spl_info[2], "value": changes[key]})
             }
+            console.log(formatted_changes)
             await httpClient.post(`${route}/api/grade/insert`, {
                 changes: formatted_changes,
             }).then(res => setResponse(res))
@@ -258,9 +263,49 @@ export const TableComponent = () => {
         }
     }
 
+    const onWorkChange = (inputValue) => {
+        setError(false)
+        let data = inputValue.value.split("_")
+        let filter = data[0]
+        let id = data[1]
+        if (filter === "id") {
+            getWorksIDs('theme_id', id)
+        } else if (filter === "type") {
+            getWorksIDs('theme_type', id)
+        } else {
+            getAllWorks()
+        }
+        setWork(inputValue)
+    }
+
+    const worksOptions = [
+        {value: 'none', label: 'Выбрать фильтр'},
+        {value: 'total_0', label: 'Все работы'},
+        {value: 'type_0', label: 'Домашние работы'},
+        {value: 'type_1', label: 'Классные работы'},
+        {value: 'type_2', label: 'Блицы'},
+        {value: 'type_3', label: 'Экзамен письменный'},
+        {value: 'type_4', label: 'Экзамен устный'},
+        {value: 'type_5', label: 'Вне статистики'},
+    ]
+
     if ((works === null) || (grades === null)) {
         return (
-            <div> Loading... </div>
+            <div className='TableComponent'>
+                <div className='adminPanelHolder'>
+                    <div className='tableUpperHolder block tableScroll'>
+                        <div className='tableLabel'>
+                            <div className='tableLabelInnerHolder'>
+                                <Select className={'worksSelect'} classNamePrefix={'works-select'} noOptionsMessage={() => <div className='deadLogoHolderSmall'><DeadLogo /></div>} defaultValue={work} options={worksOptions} onChange={onWorkChange} placeholder="Тема" />
+                            </div>
+                            <a onClick={postChanges} className='saveButton tableSaveButton'><Save /></a>
+                        </div>
+                        <div className='tableLowerHolder'>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         )
     } else if ((works['state'] === 'success') && (grades['state'] === 'success') && (data['students'].length !== 0)) {
         return (
@@ -268,19 +313,10 @@ export const TableComponent = () => {
                 <div className='adminPanelHolder'>
                     <div className='tableUpperHolder block tableScroll'>
                         <div className='tableLabel'>
-                            <label htmlFor="filterSelect"></label>
-                            <select id="filterSelect" onChange={(event) => selectFilter(event)}>
-                                <option value="none">Выбрать фильтр</option>
-                                <option value="total_0">Все работы</option>
-                                <option value="type_0">Домашние работы</option>
-                                <option value="type_1">Классные работы</option>
-                                <option value="type_2">Блицы</option>
-                                <option value="type_3">Экзамен письменный</option>
-                                <option value="type_4">Экзамен устный</option>
-                                <option value="type_5">Вне статистики</option>
-                                {filter}
-                            </select>
-                            <button onClick={postChanges}>Сохранить</button>
+                            <div className='tableLabelInnerHolder'>
+                                <Select className={'worksSelect'} classNamePrefix={'works-select'} noOptionsMessage={() => <div className='deadLogoHolderSmall'><DeadLogo /></div>} defaultValue={work} options={worksOptions} onChange={onWorkChange} placeholder="Тема" />
+                            </div>
+                            <a onClick={postChanges} className='saveButton tableSaveButton'><Save /></a>
                         </div>
                         <div className='tableLowerHolder'>
                             {!(error) ? (
@@ -298,16 +334,20 @@ export const TableComponent = () => {
                                                     {work["max_grades"].map((grade, index2) =>
                                                         <div className='tableCell tableBlockCell tableMaxCell' key={`2_${index2}`}>{grade}</div>)}
                                                 </div>
-                                                {work["students_grades"].map((student, index3) => <div className='tableRow' key={`3_${index3}`}>
-                                                        {student[1].map((student_grade, index4) => <div className='tableCell tableBlockCell' key={`4_${index4}`}><input onChange={handleInputChange} className='tableInput' defaultValue={student_grade} id={`${student[0]}_${work["id"]}_${index4}`} /></div>)}
-                                                </div>
+                                                {work["students_grades"].map((student, index3) =>
+                                                    <div className='tableRow' key={`3_${index3}`}>
+                                                        {student[1].map((student_grade, index4) =>
+                                                            <div className='tableCell tableBlockCell' key={`4_${index4}`}>
+                                                                <input onChange={handleInputChange} className='tableInput' defaultValue={student_grade} id={`${student[0]}_${work["id"]}_${index4}`} />
+                                                            </div>)}
+                                                    </div>
                                                 )}
                                             </div>
                                         )}
                                     </div>
                                 </form>
                             ) : (
-                                <div>Данные отсутствуют</div>
+                                <div className='deadLogoHolder'><DeadLogo /></div>
                             )}
                         </div>
                     </div>
@@ -316,7 +356,7 @@ export const TableComponent = () => {
         )
     } else {
         return (
-            <div> Something went wrong </div>
+            <div className='deadLogoHolder'><DeadLogo /></div>
         )
     }
 }

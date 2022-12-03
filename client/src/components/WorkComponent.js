@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import httpClient from "./httpClient"
 import {route} from "../index";
 import Select from 'react-select';
+import { ReactComponent as Reload } from '../svgs/reload.svg';
+import {ReactComponent as DeadLogo} from "../svgs/logo_dead.svg";
+import {ReactComponent as Trash} from "../svgs/trash-can.svg";
+import {ReactComponent as Save} from "../svgs/save.svg";
 
 
 export const WorkComponent = () => {
@@ -10,6 +14,7 @@ export const WorkComponent = () => {
     const [theme, setTheme] = useState('')
     const [grades, setGrades] = useState('')
     const [themes, setThemes] = useState(null)
+    const [changes, setChanges] = useState({})
     const [error, setError] = useState(false)
     const [message, setMessage] = useState(null)
     const [response, setResponse] = useState(null)
@@ -28,7 +33,7 @@ export const WorkComponent = () => {
     }, [])
 
     useEffect(() => {
-        fetch(`${route}/api/work/get-all`, {
+        fetch(`${route}/api/work/get-all/theme-sorted`, {
             credentials: 'include'}).then(
             res => res.json()
         ).then(
@@ -92,6 +97,14 @@ export const WorkComponent = () => {
         onGradesChange(e.target.value)
     }
 
+    const handleCellInputChange = (e) => {
+        const {id, value} = e.target
+        let tmp_list_changes
+        tmp_list_changes = changes
+        tmp_list_changes[id] = value
+        setChanges(tmp_list_changes)
+    }
+
     const postWork = async () => {
         try {
             const res = await httpClient.post(`${route}/api/work/create`, {
@@ -115,7 +128,7 @@ export const WorkComponent = () => {
 
     const fetchWorks = async () => {
         try {
-            const res = await httpClient.get(`${route}/api/work/get-all`, {
+            const res = await httpClient.get(`${route}/api/work/get-all/theme-sorted`, {
             }).then(res => setWorks(res["data"])).then(res => setResponse(res))
                 .catch(function (e) {
                     if (e.status !== 200) {
@@ -158,36 +171,87 @@ export const WorkComponent = () => {
         }
     }
 
+    const postChanges = async () => {
+        try {
+            let error_cell = document.getElementsByClassName('errorCell')
+            if (error_cell.length !== 0) {
+                error_cell[0].classList.remove("errorCell")
+            }
+            let formatted_changes = []
+            for (let change in changes) {
+                let key = change
+                let spl_info = key.split('_')
+                formatted_changes.push({"work_id": spl_info[1], "cell_number": spl_info[2], "value": changes[key]})
+            }
+            console.log(formatted_changes)
+            await httpClient.post(`${route}/api/work/grade/update`, {
+                changes: formatted_changes,
+            }).then(res => setResponse(res))
+        } catch (e) {
+            if (e.response.status !== 200) {
+                let error_cell = document.getElementById(e.response.data["details"]["cell_name"])
+                error_cell.classList.add("errorCell")
+                setChanges({})
+            }
+        }
+    }
+
+    const handleInputChange = (e) => {
+        const {id, value} = e.target
+        let tmp_list_changes
+        tmp_list_changes = changes
+        tmp_list_changes[id] = value
+        setChanges(tmp_list_changes)
+    }
+
     if (works === null) {
         return (
-            <div> Loading... </div>
+            <div />
         )
     } else if (works['state'] === 'success') {
         return (
             <div className="WorkComponent">
-                <form className="work_form" onSubmit={handleSubmit}>
-                    <input className="" type="text" required value={name} onChange={handleNameChange} placeholder="Название"/>
-                    <Select defaultValue={theme} options={themesTypes} onChange={onThemeChange} placeholder="Тема" />
-                    <input className="" type="text" required value={grades} onChange={handleGradesChange} placeholder="Оценки"/>
-                    <input className="" type="submit" onClick={postWork} disabled={(!name) || (!theme) || (!grades)} value="Создать"/>
-                </form>
-                {response &&
+                <div className='adminSettingsLabel'>
+                    <div className='labelText'>Работы</div>
+                    <form className="elementsForm" onSubmit={handleSubmit}>
+                        <input className="field" type="text" required value={name} onChange={handleNameChange} placeholder="Название"/>
+                        <Select className={'worksSelect'} noOptionsMessage={() => <div className='deadLogoHolderSmall'><DeadLogo /></div>} classNamePrefix={'works-select'} defaultValue={theme} options={themesTypes} onChange={onThemeChange} placeholder="Тема" />
+                        <input className="field" type="text" required value={grades} onChange={handleGradesChange} placeholder="Оценки"/>
+                        <div className='mixButtons'>
+                            <input className="button" type="submit" onClick={postWork} disabled={(!name) || (!theme) || (!grades)} value="Создать"/>
+                            <a className='reloadButton'><Reload /></a>
+                            <a className='saveButton' onClick={postChanges}><Save /></a>
+                        </div>
+                    </form>
+                </div>
+                {/*{response &&
                     <div className='student_form_message'>{response["data"]["message"]}</div>
                 }
                 {error &&
                     <div className='work_form_error'>Введены неверные данные</div>
-                }
-                <div className="">
-                    {works["details"]["works"].map(work =>
-                        <a target="_blank" rel="noopener noreferrer" key={work.id}>
-                            <div className="work">
-                                {work["name"]} {work["type_text"]} {work["grades"].map((grade, index) => <button key={index} disabled>{grade}</button>)}
-                                <button className="delete_work" onClick={() => deleteWork(work["id"])}>X</button>
-                            </div>
-                        </a>
+                }*/}
+                <div className="elementsList">
+                    {works["details"]["themes"].map((theme_, index1) =>
+                        <div key={index1}>
+                            <div className='worksThemeName'>{theme_[0]}</div>
+                            {theme_[1].map((work_, index2) =>
+                                <div className="work" key={index2}>
+                                    <div className='elementButtons'>
+                                        <div className='elementName'>{work_["name"]} <i className='elementType'>{work_["type_text"]}</i></div>
+                                        <a className="deleteElement" onClick={() => deleteWork(work_["id"])}><Trash /></a>
+                                    </div>
+                                    <div className='gradesHolder'>
+                                        {work_["grades"].map((grade, index3) =>
+                                            <div key={index3} className='gradeCell'><input defaultValue={grade} id={`grade-cell_${work_.id}_${index3}`} onChange={handleCellInputChange} className='' /></div>
+                                        )}
+                                        {/*<div className='gradeCell'><input placeholder='+' id={`grade-cell_${work_.id}_new`} onChange={handleCellInputChange} className='' /></div>*/}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
-                <button className="delete_works" onClick={() => deleteAllWorks()}>Удалить все темы</button>
+                <button className="button deleteAllButton" onClick={() => deleteAllWorks()}>Удалить все темы</button>
             </div>
         )
     } else {

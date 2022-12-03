@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import httpClient from "./httpClient"
 import {route} from "../index";
 import Select from 'react-select';
+import {LoadingComponent} from "./LoadingComponent";
+import {ReactComponent as Reload} from "../svgs/reload.svg";
+import {ReactComponent as Mana} from "../svgs/gem.svg";
 
 
 export const ManaWaitersComponent = () => {
@@ -65,18 +68,28 @@ export const ManaWaitersComponent = () => {
 
     if (waiters === null) {
         return (
-            <div> Loading... </div>
+            <div className="ManaWaitersComponent yScroll stackUpper">
+                <div className='block waitersBlock yScroll stackLower'>
+                </div>
+                {error &&
+                    <div className='mana_waiters_error'>Error</div>
+                }
+            </div>
         )
     } else if (waiters['state'] === 'success') {
         //formatWaiters()
         return (
-            <div className="ManaWaitersComponent manaScroll stackUpper">
-                <div className='block waitersBlock manaScroll stackLower'>
+            <div className="ManaWaitersComponent yScroll stackUpper">
+                <div className='block waitersBlock yScroll stackLower'>
+                    <div className='adminSettingsLabel'>
+                        <div className='labelText'>Мана</div>
+                        <a className='reloadButton'><Reload /></a>
+                    </div>
                     {waiters["details"]["waiters"].map((waiter, index) =>
                         <a className='waiterBlockA' key={index} onClick={() => giveMana(waiter["id"], waiter["mana"])}>
                             <div className='waiterBlock'>
-                                <p>{waiter["name"]}</p>
-                                <p>Мана: <b>{waiter["mana"]}</b></p>
+                                <div className='manaWaiter'>{waiter["name"]}</div>
+                                <div className='manaInfo'><b className='manaAmount'>{waiter["mana"]}</b><div className='manaGem'><Mana /></div></div>
                             </div>
                         </a>
                     )}

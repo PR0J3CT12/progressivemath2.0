@@ -2,6 +2,10 @@ import React, {useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import httpClient from "./httpClient"
 import {route} from "../index";
+import { ReactComponent as Copy } from '../svgs/copy.svg';
+import { ReactComponent as Trash } from '../svgs/trash-can.svg';
+import { ReactComponent as Info } from '../svgs/info.svg';
+import { ReactComponent as Reload } from '../svgs/reload.svg';
 
 
 export const StudentComponent = () => {
@@ -11,6 +15,7 @@ export const StudentComponent = () => {
     const [error, setError] = useState(false)
     const [message, setMessage] = useState(null)
     const [response, setResponse] = useState(null)
+    const [copied, setCopied] = useState(-1)
 
     useEffect(() => {
         fetch(`${route}/api/student/get-all`, {
@@ -98,36 +103,51 @@ export const StudentComponent = () => {
         }
     }
 
+    const setCopiedFunction = (i, login, password) => {
+        setCopied(i)
+        navigator.clipboard.writeText(`Логин: ${login}\nПароль: ${password}`)
+    }
+
     if (students === null) {
         return (
-            <div> Loading... </div>
+            <div />
         )
     } else if (students['state'] === 'success') {
         return (
             <div className="StudentComponent">
-                <form className="student_form" onSubmit={handleSubmit}>
-                    <input className="" type="text" required value={name} onChange={handleNameChange}
-                           placeholder="Фамилия Имя"/>
-                    <input className="" type="submit" onClick={postStudent} disabled={(!name)} value="Создать"/>
-                </form>
+                <div className='adminSettingsLabel'>
+                    <div className='labelText'>Ученики</div>
+                    <form className="studentForm" onSubmit={handleSubmit}>
+                        <input className="field" type="text" required value={name} onChange={handleNameChange}
+                               placeholder="Фамилия Имя"/>
+                        <div className='mixButtons'>
+                            {/*<a className='createButton' type="submit" disabled={(!name)}><Reload /></a>*/}
+                            <input className="button" type="submit" onClick={postStudent} disabled={(!name)} value="Создать"/>
+                            <a className='reloadButton' onClick={() => fetchUsers()}><Reload /></a>
+                        </div>
+                    </form>
+                </div>
                 {response &&
                     <div className='student_form_message'>{response["data"]["message"]}</div>
                 }
                 {error &&
                     <div className='student_form_error'>Введены неверные данные</div>
                 }
-                <div className="">
-                    {students["details"]["students"].map(student =>
-                        <a target="_blank" rel="noopener noreferrer" key={student.id}>
+                <div className="itemsContainer">
+                    {students["details"]["students"].map((student, index) =>
+                        <div key={index}>
                             <div className="student">
-                                {student["name"]} {student["login"]} {student["password"]}
-                                <button className="delete_student" onClick={() => deleteStudent(student["id"])}>X
-                                </button>
+                                {student["name"]}
                             </div>
-                        </a>
+                            <div className='elementButtons'>
+                                <a className="infoElement" href={`/profile/${student["id"]}`}><Info /></a>
+                                <a className={`copyStudent ${copied === index ? 'copyStudentActive' : ''}`} onClick={() => setCopiedFunction(index, student["login"], student["password"])}><Copy /></a>
+                                <a className="deleteElement" onClick={() => deleteStudent(student["id"])}><Trash /></a>
+                            </div>
+                        </div>
                     )}
                 </div>
-                <button className="delete_students" onClick={() => deleteAllStudents()}>Удалить всех учеников</button>
+                <button className="button deleteAllButton" onClick={() => deleteAllStudents()}>Удалить всех учеников</button>
             </div>
         )
     } else {

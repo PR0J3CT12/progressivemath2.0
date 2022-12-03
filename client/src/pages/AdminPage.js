@@ -24,19 +24,23 @@ export const AdminPage = () => {
 
     if (user === null) {
         return (
-            <div> Loading... </div>
+            <div></div>
         )
     } else if (user["details"]["id"] === 0) {
         return (
-            <div className='AdminPage'>
-                <h1>Панель администратора</h1>
-                <div className='adminContainer'>
-                    <AdminProfileComponent user={user}/>
-                    <div className='row_2'>
-                        <ManaWaitersComponent />
-                        <TableComponent />
+            <div>
+                <div className='AdminPage'>
+                    <h1>Панель администратора</h1>
+                    <div className='adminContainer'>
+                        <AdminProfileComponent user={user}/>
+                        <div className='row_2'>
+                            <ManaWaitersComponent />
+                            <TableComponent />
+                        </div>
                     </div>
                 </div>
+
+                <div className="footer">Created by @nickrotay. 2022.</div>
             </div>
         )
     } else {

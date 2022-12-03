@@ -7,6 +7,8 @@ import {LogoutPage} from "./pages/LogoutPage";
 import {AdminPage} from "./pages/AdminPage";
 import {StudentPage} from "./pages/StudentPage";
 import {AdminSettingsPage} from "./pages/AdminSettingsPage";
+import {LoginStatsPage} from "./pages/LoginStatsPage";
+import {RatingPage} from "./pages/RatingPage";
 
 export const useRoutes = () => {
     return (
@@ -18,6 +20,8 @@ export const useRoutes = () => {
             <Route path='/admin' element={<AdminPage />} />
             <Route path='/admin/settings' element={<AdminSettingsPage />} />
             <Route path='/profile/:sid' element={<StudentPage />} />
+            <Route path='/login-stats' element={<LoginStatsPage />} />
+            <Route path='/rating' element={<RatingPage />} />
         </Routes>
     )
 }

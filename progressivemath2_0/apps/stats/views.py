@@ -79,15 +79,15 @@ def get_themes(request):
     themes_list = []
     for theme in themes_:
         if theme.type == 0:
-            text = 'домашняя работа'
+            text = 'домашняя'
         elif theme.type == 1:
-            text = 'классная работа'
+            text = 'классная'
         elif theme.type == 2:
             text = 'блиц'
         elif theme.type == 3:
-            text = 'экзамен письменный'
+            text = 'экз. письменный'
         elif theme.type == 4:
-            text = 'экзамен устный'
+            text = 'экз. устный'
         else:
             text = 'вне статистики'
         theme_info = {"id": theme.id, "name": theme.name, "type": theme.type, "type_text": text}
@@ -221,6 +221,54 @@ def delete_themes(request):
 
 
 # region [work region]
+@require_http_methods(["GET"])
+def get_works_sorted_by_theme(request):
+    if request.session:
+        if "id" in request.session.keys():
+            student = Student.objects.get(id=request.session["id"])
+            if not student.is_admin:
+                return HttpResponse(json.dumps(
+                    {'state': 'error', 'message': f'Отказано в доступе.', 'details': {}, 'instance': request.path},
+                    ensure_ascii=False), status=403)
+        else:
+            return HttpResponse(json.dumps(
+                {'state': 'error', 'message': f'Отказано в доступе.', 'details': {}, 'instance': request.path},
+                ensure_ascii=False), status=403)
+    else:
+        return HttpResponse(
+            json.dumps({'state': 'error', 'message': f'Отказано в доступе.', 'details': {}, 'instance': request.path},
+                       ensure_ascii=False), status=403)
+    works = Work.objects.select_related('theme').all()
+    print(works.values_list())
+    themes_dict = {}
+    themes_list = []
+    for work in works:
+        if work.theme.type == 0:
+            text = 'домашняя работа'
+        elif work.theme.type == 1:
+            text = 'классная работа'
+        elif work.theme.type == 2:
+            text = 'блиц'
+        elif work.theme.type == 3:
+            text = 'экзамен письменный'
+        elif work.theme.type == 4:
+            text = 'экзамен устный'
+        else:
+            text = 'вне статистики'
+        if work.theme.name not in themes_dict.keys():
+            themes_dict[work.theme.name] = []
+        work_info = {"id": work.id, "name": work.name, "theme_id": work.theme_id, "grades": work.grades.split('_._'), "max_score": work.max_score, "exercises": work.exercises, "theme_name": work.theme.name, "type_text": text}
+        themes_dict[work.theme.name].append(work_info)
+    for theme in themes_dict.keys():
+        tmp = []
+        for work in themes_dict[theme]:
+            tmp.append(work)
+        themes_list.append([theme, tmp])
+    return HttpResponse(
+        json.dumps({'state': 'success', 'message': '', 'details': {'themes': themes_list}}, ensure_ascii=False),
+        status=200)
+
+
 @require_http_methods(["GET"])
 def get_works(request):
     if request.session:
@@ -546,6 +594,150 @@ def delete_works(request):
     return HttpResponse(
         json.dumps({'state': 'success', 'message': 'Все работы успешно удалены.', 'details': {}}, ensure_ascii=False),
         status=205)
+
+
+@require_http_methods(["POST"])
+def update_work_grades(request):
+    if request.session:
+        if "id" in request.session.keys():
+            student = Student.objects.get(id=request.session["id"])
+            if not student.is_admin:
+                return HttpResponse(json.dumps(
+                    {'state': 'error', 'message': f'Отказано в доступе.', 'details': {}, 'instance': request.path},
+                    ensure_ascii=False), status=403)
+        else:
+            return HttpResponse(json.dumps(
+                {'state': 'error', 'message': f'Отказано в доступе.', 'details': {}, 'instance': request.path},
+                ensure_ascii=False), status=403)
+    else:
+        return HttpResponse(
+            json.dumps({'state': 'error', 'message': f'Отказано в доступе.', 'details': {}, 'instance': request.path},
+                       ensure_ascii=False), status=403)
+    if request.body:
+        request_body = json.loads(request.body)
+    else:
+        return HttpResponse(
+            json.dumps({'state': 'error', 'message': 'Body запроса пустое.', 'details': {}, 'instance': request.path},
+                       ensure_ascii=False), status=400)
+    global_change = None
+    try:
+        works = Work.objects.all()
+        changes = request_body["changes"]
+        formatted_changes = {}
+        for change in changes:
+            if change['work_id'] not in formatted_changes.keys():
+                formatted_changes[change['work_id']] = []
+            formatted_changes[change['work_id']].append({'cell_number': change['cell_number'], 'value': change['value']})
+        for work_ in formatted_changes.keys():
+            work = works.get(id=int(work_))
+            grades = Grade.objects.filter(work_id=int(work_))
+            work_grades = work.grades
+            new_grades = list(map(int, work_grades.split("_._")))
+            new_grades_update = []
+            delete_ids = []
+            add_new = False
+            for change in formatted_changes[work_]:
+                global_change = {'work_id': work_, 'cell_number': change["cell_number"], 'values': change["value"]}
+                cell_number = change["cell_number"]
+                if cell_number == 'new':
+                    add_new = True
+                    new_grades.append(change["value"])
+                else:
+                    new_grades[int(change["cell_number"])] = change["value"]
+                for i in range(len(new_grades)):
+                    if new_grades[i] == '0' or new_grades[i] == '-':
+                        #new_grades_update.append(0)
+                        delete_ids.append(i)
+                        continue
+                    if (',' in str(new_grades[i])) or ('.' in str(new_grades[i])):
+                        return HttpResponse(
+                            json.dumps({'state': 'error', 'message': f'Указано недопустимое значение.',
+                                        'details': {"student_id": change["student_id"], "work_id": change["work_id"],
+                                                    "cell_number": change["cell_number"],
+                                                    "cell_name": f'{change["student_id"]}_{change["work_id"]}_{change["cell_number"]}'},
+                                        'instance': request.path},
+                                       ensure_ascii=False), status=400)
+                    cast = int(new_grades[i])
+                    if cast < 0:
+                        return HttpResponse(
+                            json.dumps({'state': 'error', 'message': f'Указано недопустимое значение.',
+                                        'details': {"work_id": change["work_id"],
+                                                    "cell_number": change["cell_number"],
+                                                    "cell_name": f'grade-cell_{change["work_id"]}_{change["cell_number"]}'},
+                                        'instance': request.path},
+                                       ensure_ascii=False), status=400)
+                    else:
+                        new_grades_update.append(cast)
+            new_grades = list(map(int, new_grades_update))
+            log_grades_string = work_grades
+            new_grades_string = '_._'.join(list(map(str, new_grades_update)))
+            max_score = sum(new_grades)
+            exercises = len(new_grades)
+            #print(new_grades)
+            #print(work.max_score, sum(new_grades))
+            #print(work_grades, new_grades_string)
+            #print(work.max_score, max_score)
+            #print(work_grades, new_grades)
+            #print(work.exercises, exercises)
+            work.grades = new_grades_string
+            work.max_score = max_score
+            work.exercises = exercises
+            if add_new:
+                pass
+            if delete_ids:
+                for grade in grades:
+                    old_student_grades = grade.grades.split("_._")
+                    # old_student_grades = list(map(int, grade.grades.split("_._")))
+                    new_student_grades = []
+                    for i in range(len(old_student_grades)):
+                        if i in delete_ids:
+                            old_student_grades[i] = ""
+                        else:
+                            new_student_grades.append(old_student_grades[i])
+                    real_grades = []
+                    for i in range(len(new_student_grades)):
+                        if new_student_grades[i] == '#':
+                            pass
+                        elif new_student_grades[i] == '-':
+                            max_score -= int(new_grades_update[i])
+                            exercises -= 1
+                        else:
+                            real_grades.append(float(new_student_grades[i]))
+                    score = sum(real_grades)
+                    new_student_grades_string = '_._'.join(new_student_grades)
+                    grade.score = score
+                    grade.max_score = max_score
+                    grade.exercises = exercises
+                    grade.grades = new_student_grades_string
+                    log_details = f'Обновлены оценки у ученика {grade.student_id} в работе {work.id}. ["old_grades": {grade.grades}, "new_grades": {new_grades_string}, "old_score": {grade.score}, "new_score": {score}, "old_exercises": {grade.exercises}, "new_exercises": {exercises}]'
+                    grade.save()
+                    log = Log(operation='UPDATE', from_table='grades', details=log_details)
+                    log.save()
+                    #print(new_student_grades_string, ' | ', score, ' | ', max_score, ' | ', exercises)
+            log_details = f'Обновлены максимальные оценки в работе {work.id}. ["old_grades": {log_grades_string}, "new_grades": {new_grades_string}]'
+            work.save()
+            log = Log(operation='UPDATE', from_table='works', details=log_details)
+            log.save()
+        return HttpResponse(
+            json.dumps({'state': 'success', 'message': 'Оценки успешно обновлены.', 'details': {}}, ensure_ascii=False),
+            status=200)
+    except KeyError as e:
+        return HttpResponse(
+            json.dumps({'state': 'error', 'message': f'Не указано поле {e}.', 'details': {}, 'instance': request.path},
+                       ensure_ascii=False), status=404)
+    except ValueError as e:
+        print(e)
+        change = global_change
+        return HttpResponse(json.dumps({'state': 'error', 'message': f'Указаны недопустимые символы.',
+                                        'details': {"work_id": change["work_id"],
+                                                    "cell_number": change["cell_number"],
+                                                    "cell_name": f'grade-cell_{change["work_id"]}_{change["cell_number"]}'},
+                                        'instance': request.path},
+                                       ensure_ascii=False), status=404)
+    except Exception as e:
+        print(e)
+        return HttpResponse(json.dumps({'state': 'error', 'message': f'{e}', 'details': {}, 'instance': request.path},
+                                       ensure_ascii=False), status=404)
 # endregion
 
 
@@ -1048,8 +1240,6 @@ def give_mana(request):
     except Exception as e:
         return HttpResponse(json.dumps({'state': 'error', 'message': f'{e}', 'details': {}, 'instance': request.path},
                                        ensure_ascii=False), status=404)
-
-
 # endregion
 
 
@@ -1077,12 +1267,14 @@ def login(request):
         if user.password == password_:
             request.session['login'] = login_
             request.session['id'] = user.id
+            permissions = int(user.is_admin)
+            id_ = user.id
         else:
             return HttpResponse(
                 json.dumps({'state': 'error', 'message': 'Неверный пароль.', 'details': {}, 'instance': request.path},
                            ensure_ascii=False), status=400)
         return HttpResponse(
-            json.dumps({'state': 'success', 'message': 'Вход успешно выполнен.', 'details': {}}, ensure_ascii=False),
+            json.dumps({'state': 'success', 'message': 'Вход успешно выполнен.', 'details': {'permissions': permissions, "id": id_}}, ensure_ascii=False),
             status=200)
     except KeyError as e:
         return HttpResponse(
@@ -1116,7 +1308,7 @@ def me(request):
                 status=200)
         else:
             return HttpResponse(
-                json.dumps({'state': 'success', 'message': 'Авторизирован.', 'details': {"id": id_, "is_admin": student.is_admin}}, ensure_ascii=False),
+                json.dumps({'state': 'success', 'message': 'Авторизирован.', 'details': {"id": id_, "is_admin": student.is_admin, "name": student.name}}, ensure_ascii=False),
                 status=200)
     else:
         return HttpResponse(

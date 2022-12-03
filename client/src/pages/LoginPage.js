@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import httpClient from "../components/httpClient"
-import {ReactComponent as Logo} from "../logo.svg";
+import {ReactComponent as Logo} from "../svgs/logo_white100x100.svg";
+import {ReactComponent as VK} from "../svgs/vk.svg";
 import {route, route_tmp} from "../index";
 
 
@@ -12,18 +13,27 @@ export const LoginPage = () => {
     const [error, setError] = useState(false)
     const [response, setResponse] = useState(null)
 
+    const redirect = async (response) => {
+        console.log(response)
+        if (response["data"]["details"]["permissions"] === 1) {
+            window.location.href = `/admin`
+        } else {
+            window.location.href = `/profile/${response["data"]["details"]["id"]}`
+        }
+    }
+
     const logInUser = async () => {
         try {
             const res = await httpClient.post(`${route}/api/login`, {
                 login: login,
                 password: password
-            }).catch(function (e) {
-                if (e.status !== 200) {
-                    setError(true)
-                    setLogin('')
-                    setPassword('')
+            }).then(res => redirect(res))
+                .catch(function (e) {
+                    if (e.status !== 200) {
+                        setError(true)
+                        setLogin('')
+                        setPassword('')
                 }
-                console.log(e.toJSON());
             })
             setLogin('')
             setPassword('')
@@ -66,20 +76,47 @@ export const LoginPage = () => {
     const navigate = useNavigate()
     if (user === null) {
         return (
-            <div> Loading... </div>
+            <div></div>
         )
     } else if (user["state"] === "error") {
+        document.body.style.overflow = "hidden"
         return (
-            <div className="LoginPage">
-                <form className="login_form" onSubmit={handleSubmit}>
-                    <input className="" type="text" required value={login} onChange={handleLoginChange} placeholder="Логин"/>
-                    <input className="" type="password" required value={password} onChange={handlePasswordChange} placeholder="Пароль"/>
-                    <input className="" type="submit" onClick={logInUser} disabled={(!password) || (!login)} value="Войти"/>
-                </form>
-                {error &&
-                    <div className='registration_error'>Неверный логин или пароль</div>
-                }
-            </div>
+                <div className="LoginPage background-wrap">
+                    <div className='loginHolder'>
+                        <div className='loginInnerHolder'>
+                            <div className='loginLogo'>
+                                <Logo />
+                            </div>
+                            <div className='loginText'>
+                                Курсы прогрессивной математики
+                            </div>
+                        </div>
+                        <div className='loginBlock'>
+                            <form className="loginForm" onSubmit={handleSubmit}>
+                                <div className='firstRow'>
+                                    <input className="login" type="text" required value={login} onChange={handleLoginChange} placeholder="Логин"/>
+                                    <input className="password" type="password" required value={password} onChange={handlePasswordChange} placeholder="Пароль"/>
+                                </div>
+                                <div className='secondRow'>
+                                    {error &&
+                                        <div className='loginError'>Неверный логин или пароль</div>
+                                    }
+                                    <input className="loginButton" type="submit" onClick={logInUser} disabled={(!password) || (!login)} value="Войти"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div className="bubble x1"></div>
+                    <div className="bubble x2"></div>
+                    <div className="bubble x3"></div>
+                    <div className="bubble x4"></div>
+                    <div className="bubble x5"></div>
+                    <div className="bubble x6"></div>
+                    <div className="bubble x7"></div>
+                    <div className="bubble x8"></div>
+                    <div className="bubble x9"></div>
+                    <div className="bubble x10"></div>
+                </div>
         )
     } else {
         console.log(user)

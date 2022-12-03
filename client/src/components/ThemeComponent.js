@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import httpClient from "./httpClient"
 import {route} from "../index";
 import Select from 'react-select';
+import {ReactComponent as Trash} from "../svgs/trash-can.svg";
+import {ReactComponent as DeadLogo} from "../svgs/logo_dead.svg";
+import { ReactComponent as Reload } from '../svgs/reload.svg';
 
 
 export const ThemeComponent = () => {
@@ -121,35 +124,40 @@ export const ThemeComponent = () => {
 
     if (themes === null) {
         return (
-            <div> Loading... </div>
+            <div />
         )
     } else if (themes['state'] === 'success') {
         return (
             <div className="ThemeComponent">
-                <form className="theme_form" onSubmit={handleSubmit}>
-                    <input className="" type="text" required value={name} onChange={handleNameChange}
-                           placeholder="Название"/>
-                    <Select defaultValue={type} options={themesTypes} onChange={onTypeChange} placeholder="Тип"/>
-                    <input className="" type="submit" onClick={postTheme} disabled={(!name) || (!type)}
-                           value="Создать"/>
-                </form>
+                <div className='adminSettingsLabel'>
+                    <div className='labelText'>Темы</div>
+                    <form className="elementsForm" onSubmit={handleSubmit}>
+                        <input className="field" type="text" required value={name} onChange={handleNameChange}
+                               placeholder="Название"/>
+                        <Select className='themesSelect' classNamePrefix={'themes-select'} noOptionsMessage={() => <div className='deadLogoHolderSmall'><DeadLogo /></div>} defaultValue={type} options={themesTypes} onChange={onTypeChange} placeholder="Тип"/>
+                        <div className='mixButtons'>
+                            <input className="button" type="submit" onClick={postTheme} disabled={(!name) || (!type)}
+                                   value="Создать"/>
+                            <a className='reloadButton'><Reload /></a>
+                        </div>
+                    </form>
+                </div>
                 {response &&
                     <div className='student_form_message'>{response["data"]["message"]}</div>
                 }
                 {error &&
                     <div className='theme_form_error'>Введены неверные данные</div>
                 }
-                <div className="">
-                    {themes["details"]["themes"].map(theme =>
-                        <a target="_blank" rel="noopener noreferrer" key={theme.id}>
-                            <div className="theme">
-                                {theme["name"]} {theme["type_text"]}
-                                <button className="delete_theme" onClick={() => deleteTheme(theme["id"])}>X</button>
+                <div className="elementsList">
+                    {themes["details"]["themes"].map(theme => <div key={theme.id}>
+                            <div className="theme elementButtons">
+                                <div className='elementName'>{theme["name"]} <i className='elementType'>{theme["type_text"]}</i></div>
+                                <a className="deleteElement" onClick={() => deleteTheme(theme["id"])}><Trash /></a>
                             </div>
-                        </a>
+                    </div>
                     )}
                 </div>
-                <button className="delete_themes" onClick={() => deleteAllThemes()}>Удалить все темы</button>
+                <button className="button deleteAllButton" onClick={() => deleteAllThemes()}>Удалить все темы</button>
             </div>
         )
     } else {

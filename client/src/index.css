@@ -9,6 +9,60 @@
     font-style: normal;
 }
 
+:root {
+    --color-background: #edeef0;
+    --color-borders: #ccd0d5;
+    --color-block: #ffffff;
+    --color-cells: rgba(220, 225, 230, 0.5);
+    --color-input-hover: #ccd0d5;
+    --color-input-focus: #9da0a4;
+    --color-input-focus-shadow: #7d7f82;
+    --color-waiterBlock-focus: #e1e1e1;
+    --color-waiterBlock-focus-shadow: #a0a0a0;
+    --progressive-color: #1692fb;
+    --color-button: #ccd0d5;
+    --color-button-borders: rgba(157, 160, 164, 0.5);
+    --color-button-hover: rgb(180, 180, 180);
+    --color-button-active: rgb(110, 110, 110);
+    --color-error: #ff7474
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -22,10 +76,13 @@ body, h1, h2, h3, h4, p, ul[class], ol[class], li, figure, figcaption, blockquot
 }
 
 body {
-  min-height: 100vh;
-  scroll-behavior: smooth;
-  text-rendering: optimizeSpeed;
-  line-height: 1.5;
+    min-height: 90vh;
+    scroll-behavior: smooth;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+    background-color: var(--color-background);
+    font-family: 'Gilroy', sans-serif;
+    overflow-y: scroll;
 }
 
 ul[class], ol[class] {
@@ -71,44 +128,39 @@ input, button, textarea, select {
   border-radius: 20px;
   border: 3px solid white;
 }
-
+.tableScroll::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+    margin-right: 10px;
+}
+.tableScroll::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+    margin-left: 10px;
+}
 .tableScroll {
 
 }
-
-.manaScroll::-webkit-scrollbar {
+.yScroll::-webkit-scrollbar {
     width: 15px;
+    margin-bottom: 5px;
 }
-.manaScroll::-webkit-scrollbar-track {
-  background: transparent;
+.yScroll::-webkit-scrollbar-track {
+    background: transparent;
 }
-.manaScroll::-webkit-scrollbar-thumb {
-  background-color: var(--color-borders);
-  border-radius: 20px;
-  border: 3px solid white;
+.yScroll::-webkit-scrollbar-thumb {
+    background-color: var(--color-borders);
+    border-radius: 20px;
+    border: 4px solid white;
 }
+.yScroll::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+    margin-bottom: 10px;
+}
+.yScroll::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+    margin-top: 10px;
+}
+.yScroll {
 
-.manaScroll {
-
-}
-
-body {
-    background-color: var(--color-background);
-    font-family: 'Gilroy', sans-serif;
-    overflow: scroll;
-}
-
-:root {
-    --color-background: #edeef0;
-    --color-borders: #ccd0d5;
-    --color-block: #ffffff;
-    --color-cells: rgba(220, 225, 230, 0.5);
-    --color-input-hover: #ccd0d5;
-    --color-input-focus: #9da0a4;
-    --color-input-focus-shadow: #7d7f82;
-    --color-waiterBlock-focus: #e1e1e1;
-    --color-waiterBlock-focus-shadow: #a0a0a0;
-    --progressive-color: #1692fb;
 }
 
 code {
@@ -267,20 +319,51 @@ td {
 }
 
 .tableUpperHolder {
-    max-width: calc(80vw - 400px);
-    min-width: calc(80vw - 200px);
     min-height: 600px;
     overflow-x: scroll;
 }
 
 .tableLabel {
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 30px;
     position: sticky;
     margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
     right: 0;
-    text-align: center;
+    /*text-align: center;
+    align-items: center;*/
+}
+
+.tableLabelInnerHolder {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    justify-content: center;
+}
+
+.tableLabel > select {
+    cursor: pointer;
+    margin: 0 5px 0 0;
+    padding: 0;
+    border: 1px solid var(--color-button);
+    outline: none;
+}
+
+.tableLabel > select > option {
+
+}
+
+.tableLabel > select > option:hover {
+    background-color: red;
+}
+
+.tableLabel > * {
+    height: inherit;
 }
 
 .adminPanelHolder {
@@ -297,6 +380,8 @@ td {
 
 .AdminPage > h1 {
     text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .container {
@@ -307,10 +392,37 @@ td {
 }
 
 .waiterBlock {
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
     text-align: center;
     padding: 10px;
     border-bottom: 1px solid var(--color-borders);
+    transition: all 0.5s ease;
+}
+
+.manaInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.manaGem > svg {
+    width: 32px;
+    height: 32px;
+    margin: 4px;
+}
+
+.manaGem > svg > g > g > path {
+    fill: grey;
+}
+
+.manaGem {
+    margin-left: 5px;
+}
+
+.manaAmount {
+    font-size: 26px;
 }
 
 .waiterBlockA:last-child > .waiterBlock{
@@ -348,16 +460,19 @@ td {
 
 .ManaWaitersComponent {
     margin-right: 20px;
-    width: 100%;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
 }
 
 .TableComponent {
     height: fit-content;
+    width: calc(100% - 220px);
 }
 
 .adminContainer {
     display: flex;
-    width: fit-content;
+    width: 85vw;
     flex-direction: column;
     margin: 0 auto 30px;
 }
@@ -392,11 +507,1066 @@ td {
 }
 
 .logoHolder > svg {
-    margin: 10px;
+    margin: 10px 10px 10px 30px;
     width: 100px;
     height: 100px;
 }
 
 .textHolder {
+    font-size: 150%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+}
 
+.footer {
+    height: 50px;
+    position: static;
+    width: 90vw;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 10px;
+    left: 0;
+    right: 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-borders);
+    color: var(--color-borders)
+}
+
+.button {
+    cursor: pointer;
+    outline: none;
+    border: 1px solid var(--color-button-borders);
+    transition: all 0.5s ease;
+    background-color: var(--color-button);
+}
+
+.button:hover {
+    background-color: var(--color-button-hover);
+}
+
+.deadLogoHolder > svg {
+    height: 100px;
+    width: 100px;
+    margin-top: 50px;
+}
+
+.deadLogoHolderSmall > svg {
+    height: 50px;
+    width: 50px;
+    margin-top: 10px;
+}
+
+.adminSettingsRow {
+    justify-content: flex-start;
+    display: flex;
+    height: 63vh;
+    width: 100%;
+}
+
+.adminSettingsRow > .block {
+    width: calc(100%/3);
+    overflow-y: scroll;
+    padding-left: 15px;
+}
+
+.adminSettingsRow > .block:first-child {
+    margin-right: 20px;
+}
+
+.adminSettingsRow > .block:last-child {
+    margin-left: 20px;
+}
+
+.adminSettingsLabel {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    position: sticky;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+    /*top: 0;
+    text-align: center;*/
+    align-items: center;
+    background-color: white;
+    border-bottom: 1px solid var(--color-borders);
+}
+
+.itemsContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.itemsContainer > div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.deleteElement {
+    height: 24px;
+    width: 24px;
+}
+
+.deleteElement > svg {
+    cursor: pointer;
+}
+
+.copyStudent {
+    height: 24px;
+    width: 24px;
+}
+
+.copyStudent > svg {
+    margin: 3px;
+    height: 18px;
+    width: 18px;
+    cursor: pointer;
+}
+
+.copyStudentActive > svg > path {
+    fill: var(--color-button-active) !important;
+}
+
+.elementButtons > a > svg > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.elementButtons > a:hover > svg > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.elementButtons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.loadingHolder > svg{
+    width: 32px;
+    height: 32px;
+}
+
+.loadingHolder {
+    display: block;
+    padding: 0;
+    margin: 0 auto;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.infoSvg {
+    width: 18px;
+    height: 18px;
+    margin: 3px;
+}
+
+.infoElement {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.colorInfo {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.infoElement:hover > .infoSvg > g > g > .colorInfo {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.deleteAllButton {
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.studentForm > .field {
+    padding-left: 8px;
+    outline: none;
+    border: 1px solid var(--color-borders);
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.studentForm > .field:hover {
+    border: 1px solid var(--color-borders)
+}
+
+.studentForm > .button {
+    height: 30px;
+    width: 80px;
+}
+
+.button:disabled:hover {
+    background: var(--color-button) !important;
+    cursor: not-allowed;
+}
+
+.studentForm {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.elementType {
+    color: var(--color-button-active);
+    font-size: 90%;
+}
+
+.elementsForm {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.elementsForm > * {
+    margin-bottom: 5px;
+    height: 30px;
+}
+
+.elementsForm > *:last-child {
+    margin-bottom: 0;
+}
+
+.elementsForm > .field {
+    padding-left: 8px;
+    outline: none;
+    border: 1px solid var(--color-borders);
+    height: 30px;
+}
+
+.elementsForm > .field:hover {
+    border: 1px solid var(--color-borders)
+}
+
+/* React select */
+.themes-select__control {
+    min-height: 30px !important;
+    height: 30px !important;
+    max-height: 30px !important;
+    box-shadow: none !important;
+    border-color: var(--color-borders) !important;
+    border-radius: 0 !important;
+}
+
+.themes-select__control:hover {
+    border-color: var(--color-borders) !important;
+    box-shadow: none !important;
+}
+
+.themes-select__value-container {
+    height: 30px !important;
+    padding: 0 6px!important;
+}
+
+.themes-select__placeholder {
+    text-align: left !important;
+}
+
+.themes-select__single-value {
+    text-align: left !important;
+}
+
+.themes-select__input {
+    margin: 0 !important;
+    margin-top: -4px !important;
+    padding: 0 !important;
+}
+
+.themes-select__option:hover {
+    background: var(--color-waiterBlock-focus) !important;
+}
+
+.themes-select__option--is-focused {
+    background: var(--color-waiterBlock-focus) !important;
+}
+
+.themes-select__option--is-selected {
+    background: var(--color-waiterBlock-focus) !important;
+    color: black !important;
+}
+
+.themes-select__indicator-separator {
+    display: none !important;
+}
+
+.themes-select__placeholder {
+    margin-top: -3px !important;
+}
+
+.themes-select__indicators {
+    height: 30px !important;
+}
+
+.themes-select__menu {
+    border-radius: 0 !important;
+}
+
+.works-select__control {
+    min-height: 30px !important;
+    height: 30px !important;
+    max-height: 30px !important;
+    box-shadow: none !important;
+    border-color: var(--color-borders) !important;
+    border-radius: 0 !important;
+}
+
+.works-select__control:hover {
+    border-color: var(--color-borders) !important;
+    box-shadow: none !important;
+}
+
+.works-select__value-container {
+    height: 30px !important;
+    padding: 0 6px!important;
+}
+
+.works-select__placeholder {
+    text-align: left !important;
+}
+
+.works-select__single-value {
+    text-align: left !important;
+}
+
+.works-select__input {
+    margin: 0 !important;
+    margin-top: -4px !important;
+    padding: 0 !important;
+}
+
+.works-select__option:hover {
+    background: var(--color-waiterBlock-focus) !important;
+}
+
+.works-select__option--is-focused {
+    background: var(--color-waiterBlock-focus) !important;
+}
+
+.works-select__option--is-selected {
+    background: var(--color-waiterBlock-focus) !important;
+    color: black !important;
+}
+
+.works-select__indicator-separator {
+    display: none !important;
+}
+
+.works-select__placeholder {
+    margin-top: -3px !important;
+}
+
+.works-select__indicators {
+    height: 30px !important;
+}
+
+.works-select__menu {
+    border-radius: 0 !important;
+}
+/**/
+
+.elementsList > * {
+    margin-bottom: 5px;
+}
+
+.buttonsHolder {
+    display: flex;
+    width: calc(32px * 3);
+    height: 32px;
+    justify-content: start;
+}
+
+/* Buttons SVGs */
+.loginStatsButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.loginStatsButton:hover > svg > g > path {
+    fill: #0E00A2;/*var(--color-button);*/
+    transition: all 0.5s ease;
+}
+
+.loginStatsButton {
+    width: 32px;
+    height: 32px;
+}
+
+.loginStatsButton > svg {
+    width: 24px;
+    height: 24px;
+    margin: 3px;
+}
+
+.ratingButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.ratingButton:hover > svg > g > path {
+    fill: #F2FF00;/*var(--color-button-hover);*/
+    transition: all 0.5s ease;
+}
+
+.ratingButton {
+    width: 32px;
+    height: 32px;
+}
+
+.ratingButton > svg {
+    width: 24px;
+    height: 24px;
+    margin: 3px;
+}
+
+.logoutButton {
+    width: 32px;
+    height: 32px;
+    /*margin: 0 0 0 5px;*/
+}
+
+.logoutButton > svg {
+    width: 24px;
+    height: 24px;
+    margin: 4px;
+}
+
+.logoutButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.logoutButton:hover > svg > g > path {
+    fill: #BF0000;/*var(--color-button);*/
+    transition: all 0.5s ease;
+}
+
+.adminSettingsButton {
+    width: 32px;
+    height: 32px;
+    /*margin: 0 0 0 10px;*/
+}
+
+.adminSettingsButton > svg {
+    width: 28px;
+    height: 28px;
+    margin: 3px;
+}
+
+.adminSettingsButton > svg > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.adminSettingsButton:hover > svg > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.adminNavButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.adminNavButton:hover > svg > g > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.goBackSvg {
+    width: 28px;
+    height: 28px;
+}
+
+.adminNavButton > svg {
+    width: 26px;
+    height: 26px;
+    margin: 3px;
+}
+
+.adminNavButton {
+    display: block;
+    padding: 0;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+.infoHolder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tablesButton:hover > svg > g > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.tablesButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.tablesButton {
+    width: 32px;
+    height: 32px;
+}
+
+.tablesButton > svg {
+    width: 22px;
+    height: 22px;
+    margin: 5px;
+}
+
+.reloadButton > svg {
+    width: 22px;
+    height: 22px;
+    margin: 4px;
+}
+
+.reloadButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.reloadButton:hover > svg > g > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.reloadButton {
+    display: block;
+    width: 30px !important;
+    height: 30px !important;
+    cursor: pointer;
+}
+
+.downloadButton > svg {
+    width: 22px;
+    height: 22px;
+    margin: 4px;
+}
+
+.downloadButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.downloadButton:hover > svg > g > path {
+    fill: #6aa84f;/*var(--color-button-hover);*/
+    transition: all 0.5s ease;
+}
+
+.downloadButton {
+    display: block;
+    width: 30px !important;
+    height: 30px !important;
+    cursor: pointer;
+}
+/**/
+
+.mixButtons {
+    display: flex;
+}
+
+.mixButtons > *:first-child {
+    width: calc(100% - 30px);
+}
+
+.work {
+    display: flex;
+    flex-direction: column;
+}
+
+.gradeCell > input {
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    border-radius: 0;
+    border: 1px solid var(--color-borders);
+    transition: all 0.5s ease;
+    border-right: 0;
+    outline: none!important;
+    cursor: pointer;
+}
+
+.gradeCell:last-child > input {
+    border-right: 1px solid var(--color-borders);
+    transition: all 0.5s ease;
+}
+
+.gradeCell > input:hover {
+    transition: all 0.5s ease;
+    background-color: var(--color-input-hover);
+}
+
+.gradeCell > input:focus {
+    transition: all 0.5s ease;
+    outline: none;
+    background-color: var(--color-input-focus);
+    box-shadow: 0 0 10px var(--color-input-focus-shadow) inset;
+}
+
+.gradesHolder {
+    display: flex;
+    flex-direction: row;
+}
+
+.saveButton:hover > svg > g > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.saveButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.saveButton {
+    width: 32px;
+    height: 32px;
+}
+
+.saveButton > svg {
+    width: 22px;
+    height: 22px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.tableSaveButton {
+    width: 30px;
+    height: 30px;
+}
+
+.tableSaveButton > svg {
+    width: 26px;
+    height: 26px;
+    margin: 2px;
+}
+
+.createButton:hover > svg > g > path {
+    fill: var(--color-button-hover);
+    transition: all 0.5s ease;
+}
+
+.createButton > svg > g > path {
+    fill: var(--color-button);
+    transition: all 0.5s ease;
+}
+
+.createButton {
+    width: 32px;
+    height: 32px;
+}
+
+.createButton > svg {
+    width: 22px;
+    height: 22px;
+    margin: 5px;
+}
+
+.waitersBlock > .adminSettingsLabel {
+    /*flex-direction: row;
+    justify-content: center;*/
+}
+
+.worksThemeName {
+    text-align: center;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 5px;
+    align-items: center;
+}
+
+.loginBlock {
+    width: inherit;
+    height: 300px;
+    vertical-align: middle;
+}
+
+.loginHolder {
+    z-index: 1;
+}
+
+.loginInnerHolder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loginLogo {
+
+}
+
+.LoginPage {
+    background: var(--progressive-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden !important;
+    flex-direction: column;
+    width: inherit !important;
+}
+
+.loginText {
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
+.loginLogo {
+
+}
+
+/* Bubbles */
+#background-wrap {
+    bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: -1;
+}
+
+/* KEYFRAMES */
+
+@-webkit-keyframes animateBubble {
+    0% {
+        margin-top: 1000px;
+    }
+    100% {
+        margin-top: -100%;
+    }
+}
+
+@-moz-keyframes animateBubble {
+    0% {
+        margin-top: 1000px;
+    }
+    100% {
+        margin-top: -100%;
+    }
+}
+
+@keyframes animateBubble {
+    0% {
+        margin-top: 1000px;
+    }
+    100% {
+        margin-top: -100%;
+    }
+}
+
+@-webkit-keyframes sideWays {
+    0% {
+        margin-left:0px;
+    }
+    100% {
+        margin-left:50px;
+    }
+}
+
+@-moz-keyframes sideWays {
+    0% {
+        margin-left:0px;
+    }
+    100% {
+        margin-left:50px;
+    }
+}
+
+@keyframes sideWays {
+    0% {
+        margin-left:0px;
+    }
+    100% {
+        margin-left:50px;
+    }
+}
+
+/* ANIMATIONS */
+
+.x1 {
+    -webkit-animation: animateBubble 25s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 25s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	animation: animateBubble 25s linear infinite, sideWays 2s ease-in-out infinite alternate;
+
+	left: -5%;
+	top: 5%;
+
+	-webkit-transform: scale(0.6);
+	-moz-transform: scale(0.6);
+	transform: scale(0.6);
+}
+
+.x2 {
+    -webkit-animation: animateBubble 20s linear infinite, sideWays 4s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 20s linear infinite, sideWays 4s ease-in-out infinite alternate;
+	animation: animateBubble 20s linear infinite, sideWays 4s ease-in-out infinite alternate;
+
+	left: 5%;
+	top: 80%;
+
+	-webkit-transform: scale(0.4);
+	-moz-transform: scale(0.4);
+	transform: scale(0.4);
+}
+
+.x3 {
+    -webkit-animation: animateBubble 28s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 28s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	animation: animateBubble 28s linear infinite, sideWays 2s ease-in-out infinite alternate;
+
+	left: 10%;
+	top: 40%;
+
+	-webkit-transform: scale(0.7);
+	-moz-transform: scale(0.7);
+	transform: scale(0.7);
+}
+
+.x4 {
+    -webkit-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
+	animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
+
+	left: 20%;
+	top: 0;
+
+	-webkit-transform: scale(0.3);
+	-moz-transform: scale(0.3);
+	transform: scale(0.3);
+}
+
+.x5 {
+    -webkit-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
+	animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
+
+	left: 30%;
+	top: 50%;
+
+	-webkit-transform: scale(0.5);
+	-moz-transform: scale(0.5);
+	transform: scale(0.5);
+}
+
+.x6 {
+    -webkit-animation: animateBubble 21s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 21s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	animation: animateBubble 21s linear infinite, sideWays 2s ease-in-out infinite alternate;
+
+	left: 50%;
+	top: 0;
+
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	transform: scale(0.8);
+}
+
+.x7 {
+    -webkit-animation: animateBubble 20s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 20s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	animation: animateBubble 20s linear infinite, sideWays 2s ease-in-out infinite alternate;
+
+	left: 65%;
+	top: 70%;
+
+	-webkit-transform: scale(0.4);
+	-moz-transform: scale(0.4);
+	transform: scale(0.4);
+}
+
+.x8 {
+    -webkit-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
+	animation: animateBubble 22s linear infinite, sideWays 3s ease-in-out infinite alternate;
+
+	left: 80%;
+	top: 10%;
+
+	-webkit-transform: scale(0.3);
+	-moz-transform: scale(0.3);
+	transform: scale(0.3);
+}
+
+.x9 {
+    -webkit-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
+	animation: animateBubble 29s linear infinite, sideWays 4s ease-in-out infinite alternate;
+
+	left: 90%;
+	top: 50%;
+
+	-webkit-transform: scale(0.6);
+	-moz-transform: scale(0.6);
+	transform: scale(0.6);
+}
+
+.x10 {
+    -webkit-animation: animateBubble 26s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	-moz-animation: animateBubble 26s linear infinite, sideWays 2s ease-in-out infinite alternate;
+	animation: animateBubble 26s linear infinite, sideWays 2s ease-in-out infinite alternate;
+
+	left: 80%;
+	top: 80%;
+
+	-webkit-transform: scale(0.3);
+	-moz-transform: scale(0.3);
+	transform: scale(0.3);
+}
+
+/* OBJECTS */
+
+.bubble {
+    -webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+
+    -webkit-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 0.5);
+	-moz-box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 0.5);
+	box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 0.5);
+
+    height: 200px;
+	position: absolute;
+	width: 200px;
+}
+
+.bubble:after {
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%); /* FF3.6+ */
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(255,255,255,0.5)), color-stop(70%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%); /* Chrome10+,Safari5.1+ */
+    background: -o-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%); /* Opera 12+ */
+    background: -ms-radial-gradient(center, ellipse cover,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%); /* IE10+ */
+    background: radial-gradient(ellipse at center,  rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 70%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ffffff', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+
+    /*-webkit-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+	-moz-box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);
+	box-shadow: inset 0 20px 30px rgba(255, 255, 255, 0.3);*/
+
+	content: "";
+    height: 180px;
+	left: 10px;
+	position: absolute;
+	width: 180px;
+}
+/**/
+
+.loginForm > div > input {
+    padding-left: 10px;
+    background: transparent;
+    outline: none!important;
+    border-radius: 8px;
+    border: 3px solid white;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+}
+
+/* do not group these rules */
+.loginForm > div > input::-webkit-input-placeholder {
+    color: white;
+}
+.loginForm > div > input:-moz-placeholder {
+    /* FF 4-18 */
+    color: white;
+    opacity: 1;
+}
+.loginForm > div > input::-moz-placeholder {
+    /* FF 19+ */
+    color: white;
+    opacity: 1;
+}
+.loginForm > div > input:-ms-input-placeholder {
+    /* IE 10+ */
+    color: white;
+}
+.loginForm > div > input::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: white;
+}
+.loginForm > div > input::placeholder {
+    /* modern browser */
+    color: white;
+}
+
+.loginButton {
+    padding: 0 !important;
+    margin-top: 25px;
+    background: white !important;
+    width: 150px !important;
+    color: var(--progressive-color) !important;
+    transition: all 0.5s ease;
+}
+
+.loginButton:hover {
+    transition: all 0.5s ease;
+    transform: scale(1.1);
+}
+
+.loginError {
+    color: var(--color-error);
+    font-weight: bold;
+    height: 0;
+}
+
+.firstRow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.secondRow {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.StudentPage {
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: var(--progressive-color);
+    height: 100%;
+    width: 100%;
+}
+
+.studentMenu {
+    height: 90vh;
+    width: 15vw;
+    background: #282c34;
+    border-radius: 0 20px 20px 0;
+}
+
+.studentProfile {
+    display: flex;
+    height: fit-content;
+    padding: 20px;
+    min-width: 80vw;
 }

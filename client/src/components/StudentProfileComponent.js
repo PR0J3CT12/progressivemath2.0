@@ -12,39 +12,33 @@ import { ReactComponent as Rating } from '../svgs/rating.svg';
 import { ReactComponent as Download } from '../svgs/download.svg';
 
 
+export const StudentProfileComponent = (user) => {
 
-export const AdminProfileComponent = (user) => {
-    const [rotating, setRotating] = useState(false)
-    const link = document.location.pathname
-    let state
-    if (link.includes('settings')) {
-        state = 1
-    } else {
-        state = 0
-    }
-
-    const changeState = () => {
-        if (rotating) {
-            setRotating(false)
-        } else {
-            setRotating(true)
-        }
+    const seed = Math.floor(Math.random() * 4)
+    let greetings
+    if (seed === 0) {
+        greetings = 'Приветствую тебя, '
+    } else if (seed === 1) {
+        greetings = 'Здравствуй, '
+    } else if (seed === 2) {
+        greetings = 'Добро пожаловать, '
+    } else if (seed === 3) {
+        greetings = 'Привет, '
     }
 
     if (user['user'] === null) {
         return (
-            <div> Loading... </div>
+            <div />
         )
-    } else if (user['user']['details']['is_admin'] === true) {
+    } else if (user['user']) {
         return (
-            <div className='AdminProfileComponent row_1 block adminProfile'>
-                <a className={'logoHolder' + (rotating?' rotating':'')} onClick={changeState}><Logo /></a>
+            <div className='StudentProfileComponent row_1 block studentProfile'>
+                <a className='logoHolder'><Logo /></a>
                 <div className='infoHolder'>
                     <div className='textHolder'>
-                        <p>Добро пожаловать, <b>{user['user']['details']['name']}</b>!</p>
+                        <p>{greetings}<b>{user['user']['details']['name']}</b>!</p>
                     </div>
                     <div className='buttonsHolder'>
-                        <a className={(state === 0) ? 'adminSettingsButton' : 'tablesButton'} href={(state === 0) ? '/admin/settings': '/admin'}>{(state === 0) ? (<Settings />): (<Tables />)}</a>
                         <a className='ratingButton' href={'/rating'}><Rating /></a>
                         <a className='loginStatsButton' href={'/login-stats'}><LoginStats /></a>
                         <a className='downloadButton' href={'/'}><Download /></a>
